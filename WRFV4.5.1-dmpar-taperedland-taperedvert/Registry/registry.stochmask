@@ -1,0 +1,47 @@
+# Option for a land/sea mask and vertical mask with with user-configurable weighting options
+
+# Start with Land/Sea
+# Namelist variables to configure weighting
+rconfig   integer     wm_on                    		namelist,weightmask      	1            	0  		- "generate weighted masking field: 0=off 1=on over water 2=on over land"
+rconfig   integer     wm_type				namelist,weightmask		1		0  		- "type of tapering for weighted mask: 0=no taper, 1=linear, 2=exponential"
+rconfig   real        wm_start				namelist,weightmask		1 		0.0 		- "distance from land/sea point to start taper (km; weights at distances greater than this value = maxwt)"
+rconfig   real	      wm_end				namelist,weightmask		1               0.0		- "distance from land/sea point to end taper (km; weights at distances leq this value = minwt)"
+rconfig   real        wm_maxwt				namelist,weightmask		1 		1.0 		- "maximum weighting value. Default to 1.0"
+rconfig   real	      wm_minwt				namelist,weightmask	 	1               0.0		- "minimum weighting value. Default to 0.0"
+# Namelist variables to define how weighting is applied (1 = do mask, 0 = no masking)
+rconfig   integer     wm_spp_pbl                    	namelist,weightmask      	1            	0  		- "mask the spp_pbl field"
+rconfig   integer     wm_spp_conv                   	namelist,weightmask      	1            	0  		- "mask the spp_conv field"
+rconfig   integer     wm_spp_lsm                    	namelist,weightmask      	1            	0  		- "mask the spp_lsm field"
+rconfig   integer     wm_sppt                   	namelist,weightmask      	1            	0  		- "mask the sppt field"
+rconfig   integer     wm_skeb                   	namelist,weightmask      	1            	0  		- "mask the skeb field"
+
+# Now the vertical
+# Namelist variables to configure weighting
+rconfig   integer     vm_on                             namelist,vertmask             1               0               - "generate vertical weighted masking field: 0=off 1=mask above 2=mask below"
+rconfig   integer     vm_type                           namelist,vertmask             1               0               - "type of tapering for weighted mask: 0=no taper, 1=linear, 2=exponential"
+rconfig   real        vm_start                          namelist,vertmask             1               5000.0          - "height above surface to start taper (m; weights at heights below than this value = maxwt)"
+rconfig   real        vm_end                            namelist,vertmask             1               6000.0          - "distance from land/sea point to end taper (km; weights at heights above this value = minwt)"
+rconfig   real        vm_maxwt                          namelist,vertmask             1               1.0             - "maximum weighting value. Default to 1.0"
+rconfig   real        vm_minwt                          namelist,vertmask             1               0.0             - "minimum weighting value. Default to 0.0"
+# Namelist variables to define how weighting is applied (1 = do mask, 0 = no masking)
+rconfig   integer     vm_spp_pbl                        namelist,vertmask             1               0               - "mask the spp_pbl field"
+rconfig   integer     vm_spp_conv                       namelist,vertmask             1               0               - "mask the spp_conv field"
+rconfig   integer     vm_spp_lsm                        namelist,vertmask             1               0               - "mask the spp_lsm field"
+rconfig   integer     vm_sppt                           namelist,vertmask             1               0               - "mask the sppt field"
+rconfig   integer     vm_skeb                           namelist,vertmask             1               0               - "mask the skeb field"
+
+
+
+# Variables to be output
+#<Table> <Type> 	<Sym>         		<Dims> 	<Use>  	<NumTLev> <Stagger>   <IO>     				<DNAME>             	<DESCRIP>     								<UNITS>
+
+state   real   		weightmask            	ij    	misc   	1     		-     i01rh     			"WEIGHTMASK"      	"Weighted land/sea mask (lakes considered land for now)"  		"unitless"
+state	real		dist_nearest_land	ij	misc    1     		-     i01rh    			   	"DIST2LAND"      	"Distance to nearest land point (incl. lakes)"  			"m"
+state	real		dist_nearest_sea	ij	misc    1     		-     i01rh    				"DIST2SEA"    		"Distance to nearest sea point"  					"m"
+
+# Variables to be output
+#<Table> <Type>         <Sym>                   <Dims>  <Use>   <NumTLev> <Stagger>   <IO>                              <DNAME>                 <DESCRIP>                                                               <UNITS>
+
+state   real            vertmask              	i{stoclev}j     dyn_em    1               -     rhdf=(p2c)                             "VERTMASK"            "Weighted vertical mask"				        "unitless"
+state   real            z_vmask      		i{stoclev}j     dyn_em    1               -     rhdf=(p2c)                             "ZVMASK"              "Distance above sfc for masking"                          "m"
+
